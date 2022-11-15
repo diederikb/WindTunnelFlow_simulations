@@ -1,12 +1,12 @@
 #### jupyter.sh START ####
 #!/bin/bash
 #$ -N array_job_test
-#$ -t 1-2:1
+#$ -t 1-1:1
 #$ -cwd
 #$ -o logs/$JOB_ID.out
 #$ -e logs/$JOB_ID.err
 #$ -j n
-#$ -l h_rt=24:00:00,h_data=10G,highp
+#$ -l h_rt=1:00:00,h_data=10G,highp
 
 PROJECT_SUBDIR="cawt_job"
 CASE_TYPE="AFUWT_NACA0009_gaussian_suction"
@@ -52,7 +52,9 @@ fi
 cd $WORKING_DIR
 cp $PACKAGE_DIR/examples/$PARAMETERS_FILE $WORKING_DIR/$PARAMETERS_FILE
 
-awk '/case/{sub(/\"[^\"]*\",?$/,"\"a_b\"")}1' a="${JOB_ID}" b="${SGE_TASK_ID}" $WORKING_DIR/$PARAMETERS_FILE
+sed -i '/case/c\   \"case\" : \"${JOB_ID}_${SGE_TASK_ID}\",' $WORKING_DIR/$PARAMETERS_FILE
+
+#awk -v a="${JOB_ID}" b="${SGE_TASK_ID}" 'BEGIN {/case/{sub(/\"[^\"]*\",?$/,"\"a_b\"")}1}' $WORKING_DIR/$PARAMETERS_FILE
 #awk '/alpha/{sub(/\"[^\"]*\",?$/,"\"$AOA\"")}1' $PARAMETERS_TEMPLATE
 #awk '/Re/{sub(/\"[^\"]*\",?$/,"\"$RE\"")}1' $PARAMETERS_TEMPLATE
 #awk '/grid_Re/{sub(/\"[^\"]*\",?$/,"\"$RE\"")}1' $PARAMETERS_TEMPLATE
