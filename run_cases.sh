@@ -62,11 +62,11 @@ for SGE_TASK_ID in {1..55}; do
     sed -i 's/\"Q_SD_over_Q_in\":.*/\"Q_SD_over_Q_in\": '${QRATIO},'/g' $PARAMETERS_FILE
     sed -i 's/\"grid_Re\":.*/\"grid_Re\": '${GRID_RE}'/g' $PARAMETERS_FILE
     
-    STATS_FILE=${JOB_ID}_${SGE_TASK_ID}_stats.txt
+    STATS_FILE=${JOB_ID}_${SGE_TASK_ID}_out.txt
     START_TIME=`date`
     printf "JOB_ID: ${JOB_ID}\nSGE_TASK_ID: ${SGE_TASK_ID}\nGRID_RE: ${GRID_RE}\nRE: ${RE}\nAOA: ${AOA}\nQRATIO: ${QRATIO}\nSTART_TIME: ${START_TIME}\n" >> $STATS_FILE
     
-    #julia --project=$JULIA_PROJECT $JULIA_SCRIPT
+    julia --project=$JULIA_PROJECT $JULIA_SCRIPT
     END_TIME=`date`
     printf "END_TIME: ${END_TIME}\n" >> $STATS_FILE
     
