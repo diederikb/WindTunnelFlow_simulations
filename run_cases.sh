@@ -5,7 +5,7 @@
 #$ -o logs/$JOB_ID_$TASK_ID.out
 #$ -e logs/$JOB_ID_$TASK_ID.err
 #$ -j n
-#$ -l h_rt=2:00:00,h_data=10G -pe shared 1
+#$ -l h_rt=3:00:00,h_data=10G -pe shared 1
 
 . /u/local/Modules/default/init/modules.sh
 module load julia/1.8.1
@@ -22,7 +22,7 @@ JULIA_PROJECT=${PACKAGE_DIR}/Project.toml
 
 QRATIO_ARRAY=(0.05 0.1 0.15 0.2 0.25)
 AOA_ARRAY=(0 2 4 6 8 10 12 14 16 18 20)
-RE_ARRAY=(100)
+RE_ARRAY=(400)
 GRID_RE_ARRAY=(6)
 
 COUNTER=1
