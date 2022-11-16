@@ -1,11 +1,11 @@
 #!/bin/bash
 #$ -N array_job_test
-#$ -t 1-3:1
+#$ -t 1-55:1
 #$ -cwd
 #$ -o logs/$JOB_ID_$TASK_ID.out
 #$ -e logs/$JOB_ID_$TASK_ID.err
 #$ -j n
-#$ -l h_rt=3:00:00,h_data=10G -pe shared 1
+#$ -l h_rt=4:00:00,h_data=10G -pe shared 1
 
 . /u/local/Modules/default/init/modules.sh
 module load julia/1.8.1
