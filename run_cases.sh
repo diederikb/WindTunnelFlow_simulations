@@ -1,29 +1,30 @@
 #!/bin/bash
-#$ -N array_job_test
-#$ -t 1-55:1
+#$ -N array_job
+#$ -t 1-3:1
 #$ -cwd
 #$ -o logs/$JOB_ID_$TASK_ID.out
 #$ -e logs/$JOB_ID_$TASK_ID.err
 #$ -j n
-#$ -l h_rt=4:00:00,h_data=10G -pe shared 1
+#$ -l h_rt=8:00:00,h_data=40G
 
-. /u/local/Modules/default/init/modules.sh
-module load julia/1.8.1
+export FFTW_NUM_THREADS=1
+export NSLOTS=1
+export OPENBLAS_NUM_THREADS=1
 
 CURRENT_WORKING_DIRECTORY=$(pwd)
 echo $CURRENT_WORKING_DIRECTORY
 
 PROJECT_SUBDIR=cawt_job
-CASE_TYPE=AFUWT_NACA0009_gaussian_suction
+CASE_TYPE=AFUWT_NACA0009_step_opening_closing
 PACKAGE_DIR=/u/home/b/beckers/.julia/dev/WindTunnelFlow
 PARAMETERS_FILE=${CASE_TYPE}.json
 JULIA_SCRIPT=${PACKAGE_DIR}/examples/${CASE_TYPE}.jl
 JULIA_PROJECT=${PACKAGE_DIR}/Project.toml
 
-QRATIO_ARRAY=(0.05 0.1 0.15 0.2 0.25)
-AOA_ARRAY=(0 2 4 6 8 10 12 14 16 18 20)
+QRATIO_ARRAY=(0.1 0.2 0.3)
+AOA_ARRAY=(0 5 10 15 20)
 RE_ARRAY=(400)
-GRID_RE_ARRAY=(6)
+GRID_RE_ARRAY=(2.5)
 
 COUNTER=1
 for GRID_RE_COUNTER in ${GRID_RE_ARRAY[@]}; do
@@ -65,9 +66,15 @@ sed -i 's/\"grid_Re\":.*/\"grid_Re\": '${GRID_RE}'/g' $PARAMETERS_FILE
 
 STATS_FILE=${JOB_ID}_${SGE_TASK_ID}_out.txt
 START_TIME=`date`
+START_TIME_SECONDS=`date +%s`
 printf "JOB_ID: ${JOB_ID}\nSGE_TASK_ID: ${SGE_TASK_ID}\nGRID_RE: ${GRID_RE}\nRE: ${RE}\nAOA: ${AOA}\nQRATIO: ${QRATIO}\nSTART_TIME: ${START_TIME}\n" >> $STATS_FILE
-JULIA_EXCLUSIVE=1 julia --project=$JULIA_PROJECT $JULIA_SCRIPT >> $STATS_FILE 2>&1 END_TIME=`date`
+lscpu >> $STATS_FILE 
+/u/home/b/beckers/julia-1.8.2/bin/julia --threads=4 --project=$JULIA_PROJECT $JULIA_SCRIPT >> $STATS_FILE 2>&1
+END_TIME=`date`
+END_TIME_SECONDS=`date +%s`
 printf "END_TIME: ${END_TIME}\n" >> $STATS_FILE
+ELAPSED_TIME=$(( END_TIME_SECONDS - START_TIME_SECONDS ))
+eval "echo Elapsed time: $(date -ud "@$ELAPSED_TIME" +'$((%s/3600/24)) days %H hr %M min %S sec')" >> $STATS_FILE
 
 cd $CURRENT_WORKING_DIRECTORY
 
