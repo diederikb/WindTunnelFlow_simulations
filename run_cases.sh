@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -N array_job
-#$ -t 1-15:1
+#$ -t 1-20:1
 #$ -cwd
 #$ -o logs/$JOB_ID_$TASK_ID.out
 #$ -e logs/$JOB_ID_$TASK_ID.err
@@ -23,8 +23,8 @@ PARAMETERS_FILE=${CASE_TYPE}_${GUST}.json
 JULIA_SCRIPT=${PACKAGE_DIR}/examples/${CASE_TYPE}.jl
 JULIA_PROJECT=${PACKAGE_DIR}/Project.toml
 
-QRATIO_ARRAY=(0.1 0.2 0.3)
-AOA_ARRAY=(0 5 10 15 20)
+QRATIO_ARRAY=(0.05 0.1 0.2 0.3 0.4)
+AOA_ARRAY=(0 5 10 15)
 RE_ARRAY=(400)
 GRID_RE_ARRAY=(2.5)
 
