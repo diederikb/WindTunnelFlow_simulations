@@ -1,11 +1,11 @@
 #!/bin/bash
 #$ -N array_job
-#$ -t 1-3:1
+#$ -t 1-15:1
 #$ -cwd
 #$ -o logs/$JOB_ID_$TASK_ID.out
 #$ -e logs/$JOB_ID_$TASK_ID.err
 #$ -j n
-#$ -l h_rt=8:00:00,h_data=40G
+#$ -l h_rt=12:00:00,h_data=40G
 
 export FFTW_NUM_THREADS=1
 export NSLOTS=1
@@ -15,9 +15,11 @@ CURRENT_WORKING_DIRECTORY=$(pwd)
 echo $CURRENT_WORKING_DIRECTORY
 
 PROJECT_SUBDIR=cawt_job
-CASE_TYPE=AFUWT_NACA0009_step_opening_closing
+CASE_TYPE=AFUWT
+AIRFOIL=flat_plate
+GUST=gaussian_suction
 PACKAGE_DIR=/u/home/b/beckers/.julia/dev/WindTunnelFlow
-PARAMETERS_FILE=${CASE_TYPE}.json
+PARAMETERS_FILE=${CASE_TYPE}_${GUST}.json
 JULIA_SCRIPT=${PACKAGE_DIR}/examples/${CASE_TYPE}.jl
 JULIA_PROJECT=${PACKAGE_DIR}/Project.toml
 
@@ -50,7 +52,7 @@ then
     exit 0
 fi
 
-WORKING_DIR=${PROJECT_SUBDIR}_${JOB_ID}_${SGE_TASK_ID}_${CASE_TYPE}_Grid_Re_${GRID_RE}_Re_${RE}_aoa_${AOA}_Qratio_${QRATIO}
+WORKING_DIR=${PROJECT_SUBDIR}_${JOB_ID}_${SGE_TASK_ID}_${CASE_TYPE}_${AIRFOIL}_${GUST}_Grid_Re_${GRID_RE}_Re_${RE}_aoa_${AOA}_Qratio_${QRATIO}
 if [ ! -d ${WORKING_DIR} ]; then
     mkdir -p ${WORKING_DIR}
 fi
@@ -59,6 +61,8 @@ cd $WORKING_DIR
 cp $PACKAGE_DIR/examples/$PARAMETERS_FILE .
 
 sed -i 's/\"case\":.*/\"case\": '\"${JOB_ID}_${SGE_TASK_ID}\",'/g' $PARAMETERS_FILE
+sed -i 's/\"airfoil\":.*/\"airfoil\": '\"${AIRFOIL}\",'/g' $PARAMETERS_FILE
+sed -i 's/\"gust_type\":.*/\"gust_type\": '\"${GUST}\",'/g' $PARAMETERS_FILE
 sed -i 's/\"alpha\":.*/\"alpha\": '${AOA},'/g' $PARAMETERS_FILE
 sed -i 's/\"Re\":.*/\"Re\": '${RE},'/g' $PARAMETERS_FILE
 sed -i 's/\"Q_SD_over_Q_in\":.*/\"Q_SD_over_Q_in\": '${QRATIO},'/g' $PARAMETERS_FILE
