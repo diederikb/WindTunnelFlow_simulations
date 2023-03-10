@@ -1,0 +1,21 @@
+{
+  "case": "5903719_3",
+  "airfoil": "naca0009",
+  "gust_type": "gaussian_suction",
+  "H_TS": 0.61,
+  "W_TS": 0.61,
+  "L_TS": 2.1,
+  "x_O_over_L_TS": 0.5,
+  "y_O_over_H_TS": 0.5,
+  "c": 0.245,
+  "Re": 400,
+  "alpha": 0,
+  "t_final": 13.0,
+  "Q_SD_over_Q_in": 0.2,
+  "x_SD_lo_over_L_TS": 0.4,
+  "x_SD_hi_over_L_TS": 0.6,
+  "t_suction": 10.0,
+  "sigma_suction": 0.15,
+  "grid_Re": 2.5,
+  "snapshot_times": "9.5 10.0 10.5 11.0"
+}
